@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Weather App</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+        }
+
+        #weather-container {
+            margin-top: 50px;
+        }
+
+        #search-input {
+            padding: 5px;
+        }
+
+        #search-button {
+            padding: 5px 10px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <h1>Weather App</h1>
+
+    <div>
+        <input type="text" id="search-input" placeholder="Enter city name">
+        <button id="search-button" onclick="searchWeather()">Search</button>
+        
+        
+    </div>
+
+    <div id="weather-container">
+        <!-- Weather information will be displayed here -->
+    </div>
+
+    <script>
+        // OpenWeatherMap API key
+        const apiKey = 'e0971a8427b869d71e01483504b7d7aa';
+
+        // Default city
+        const defaultCity = 'YOUR_CITY_NAME';
+
+        // Function to get weather data from OpenWeatherMap API
+        function getWeather(city) {
+            
+            const apiUrl = `https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=${apiKey}&units=metric`;
+
+            fetch(apiUrl)
+                .then(response => response.json())
+                .then(data => {
+                    displayWeather(data);
+                })
+                .catch(error => {
+                    console.error('Error fetching weather data:', error);
+                });
+                    
+        }
+
+        // Function to display weather information on the webpage
+        function displayWeather(data) {
+            const weatherContainer = document.getElementById('weather-container');
+
+            const cityName = data.name;
+            const temperature = data.main.temp;
+            const weatherDescription = data.weather[0].description;
+
+            const weatherInfo = `<p>City: ${cityName}</p>
+                                <p>Temperature: ${temperature} &deg;C</p>
+                                <p>Weather: ${weatherDescription}</p>
+                                <p>Wind speed: ${data.wind.speed}m/s</p>
+                                <p>Humidity: ${data.main.humidity}%</p>
+                                <p>Pressure: ${data.main.pressure}hPa</p>
+                                <p> Day: ${data.dt_txt}</p>
+                                <P> weather icon: <img src="http://openweathermap.org/img/wn/${data.weather[0].icon}@2x.png" alt="weather icon"></p>`;
+                                
+            weatherContainer.innerHTML = weatherInfo;
+        }
+
+        // Function to search for weather by city name
+        function searchWeather() {
+            const searchInput = document.getElementById('search-input');
+            const city = searchInput.value;
+
+            if (city) {
+                getWeather(city);
+            } else {
+                // If the search input is empty, show default city weather
+                getWeather(defaultCity);
+            }
+        }
+
+        // Initial load - display weather for the assigned city
+        getWeather(defaultCity);
+        
+    </script>
+</body>
+</html>
